@@ -42,6 +42,53 @@ SELECT @divisao AS 'Divisão de 3 por 4'
 SELECT ROUND(@divisao,2,1) AS 'Divisão arredondada'
 SELECT ROUND(@divisao,2,0) AS 'Divisão arredondada para cima'
 SELECT ROUND(@divisao,2,2) AS 'Divisão arredondada'
+-- Resultados anteriores (tudo int): 10, 15, 27, 70, 4.85714285714286, 4.85, 4.86, 4.85
+----------------------------------------------------------------------------
+-- C O R R E Ç Ã O   D O   P R O F E S S O R
+----------------------------------------------------------------------------
+-- é importante lembrar que mesmo quando os números são inteiros, os cálculos realizados com eles
+-- podem resultar em números decimais, então o seu conselho foi, declararmos todos como float
+-- Atuais resultados: (tudo float):  10, 15, 27, 70, 4.85714285714286, 4.85, 4.86, 4.85
+-- TUDO EXATAMENTE IGUAL, a diferença ficou na praticidade do cálculo e da não necessidade de não
+-- converter um int em float na divisão.
+
+DECLARE @valor1 FLOAT = 10,
+		@valor2 FLOAT = 5,
+		@valor3 FLOAT = 34,
+		@valor4 FLOAT = 7
+SELECT 
+	@valor1 AS 'Valor1',
+	@valor2 AS 'Valor2',
+	@valor3 AS 'Valor3',
+	@valor4 AS 'Valor4'
+
+	
+/*	a) Crie uma nova variável para armazenar o resultado da soma entre valor1 e valor2. Chame
+		essa variável de soma.*/
+DECLARE @soma as FLOAT = @valor1 + @valor2
+SELECT @soma AS 'Soma de 1 e 2'
+
+/*	b) Crie uma nova variável para armazenar o resultado da subtração entre valor3 e valor 4.
+		Chame essa variável de subtracao.*/
+DECLARE @subtracao as FLOAT = @valor3 - @valor4
+SELECT @subtracao AS 'Subtração 4 de 3'
+
+
+/*	c) Crie uma nova variável para armazenar o resultado da multiplicação entre o valor 1 e o
+		valor4. Chame essa variável de multiplicacao.*/
+DECLARE @multiplicacao AS FLOAT = @valor1 * @valor4
+SELECT @multiplicacao AS 'Multiplicação de 1 por 4'
+
+
+/*	d) Crie uma nova variável para armazenar o resultado da divisão do valor3 pelo valor4. Chame
+		essa variável de divisao. Obs: O resultado deverá estar em decimal, e não em inteiro.*/
+DECLARE @divisao AS FLOAT = @valor3 / @valor4
+SELECT @divisao AS 'Divisão de 3 por 4'
+
+/*	e) Arredonde o resultado da letra d) para 2 casas decimais.*/ 
+SELECT ROUND(@divisao,2,1) AS 'Divisão arredondada'
+SELECT ROUND(@divisao,2,0) AS 'Divisão arredondada para cima'
+SELECT ROUND(@divisao,2,2) AS 'Divisão arredondada'
 
 /* -------------------------------------------------------------------------------------------------
 2 - Para cada declaração das variáveis abaixo, atenção em relação ao tipo de dado que deverá ser
@@ -92,6 +139,13 @@ SELECT
 	' e tenho ' + CAST(@varNumPets AS VARCHAR(30)) + 
 	' pets.'
 
+SELECT
+	'Meu nome é ' + 
+	@varNome + 
+	', nasci em ' + 
+	FORMAT(@varDtNascimento,'dd/MM/yyyy') + 
+	' e tenho ' + CAST(@varNumPets AS VARCHAR(30)) + 
+	' pets.'
 /* -------------------------------------------------------------------------------------------------
 4 - Você acabou de ser promovido e o seu papel será realizar um controle de qualidade sobre as
 	lojas da empresa.
@@ -102,13 +156,62 @@ SELECT
 	O seu resultado deverá estar estruturado em uma frase, com a seguinte estrutura:
 	‘As lojas fechadas no ano de 2008 foram: ’ + nome_das_lojas
 
-	Obs: utilize o comando PRINT (e não o SELECT!) para mostrar o resultado.
-	
+	Obs: utilize o comando PRINT (e não o SELECT!) para mostrar o resultado.*/
+SELECT * FROM DimStore
 
+DECLARE @varListaLojas VARCHAR(70) = ''
+
+SELECT
+	@varListaLojas = @varListaLojas + StoreName + ', '
+FROM
+	DimStore
+WHERE
+	FORMAT(CloseDate, 'yyyy') = 2008
+
+PRINT 'As lojas fechadas no ano de 2008 foram: ' + LEFT(@varListaLojas, DATALENGTH (@varListaLojas)-2)
 /* -------------------------------------------------------------------------------------------------
 5 - 5. Você precisa criar uma consulta para mostrar a lista de produtos da tabela DimProduct para
 	uma subcategoria específica: ‘Lamps’.
-	Utilize o conceito de variáveis para chegar neste resultado.
+	Utilize o conceito de variáveis para chegar neste resultado.*/
 
+SELECT
+	TOP(1000) * 
+FROM 
+	DimProduct
 
+SELECT 
+	TOP(1000) * 
+FROM 
+	DimProductSubcategory
 
+DECLARE @varListaProdutos AS VARCHAR(1000) = ''
+
+SELECT
+	@varListaProdutos = @varListaProdutos + ProductName + CHAR(10)
+FROM 
+	DimProduct
+INNER JOIN
+	DimProductSubcategory
+ON
+	DimProduct.ProductSubcategoryKey =
+	DimProductSubcategory.ProductSubcategoryKey
+WHERE
+	ProductSubcategoryName = 'Lamps'
+
+PRINT @varListaProdutos
+
+-------------------------------------------------------------------------------
+-- S O L U Ç Ã O   D O    P  R O F E S S O R
+-------------------------------------------------------------------------------
+SELECT TOP(1000) * FROM DimProduct
+SELECT TOP(1000) * FROM DimProductSubcategory
+
+DECLARE @varNomeSubcategoria VARCHAR (30) = 'Lamps'
+DECLARE @varIdSucategoria INT = (SELECT ProductSubcategoryKey FROM DimProductSubcategory WHERE ProductSubcategoryName = @varNomeSubcategoria)
+
+SELECT
+	*
+FROM 
+	DimProduct
+WHERE
+	ProductSubcategoryKey = @varIdSucategoria

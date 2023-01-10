@@ -1,15 +1,28 @@
 /* -------------------------------------------------------------------------------------------------
-FUNÇÕES DE AGREGAÇÃO
+MANIPULANDO TEXTOS E DATAS NO SQL
 
-COUNT
-COUNT + DISTINCT
-SUM
-MIN
-MAX
-AVG
-
-/* -------------------------------------------------------------------------------------------------*/
-
+LEN e DATALENGTH
+CONCAT
+LEFT e RIGHT
+REPLACE, TRANSLATE e STUFF
+UPPER e LOWER
+FORMAT
+CHARINDEX
+SUBSTRING
+TRIM, LTRIM E RTRIM
+YEAR, MONTH e DAY
+DATEFROMPARTS
+GETDATE, SYSDATETIME
+DATEPART
+DATEADD
+DATEDIFF
+*/
+/* -------------------------------------------------------------------------------------------------
+LEN e DATA DATALENGTH: Retorna a quantidade de caraccteres de uma palavra.*/
+-- Descubra a quantidade da palavra 'SQL Hashtag'
+SELECT
+	LEN('SQL Hash   tag') AS 'Len', -- Considera todos os espaços entre palavras
+	DATALENGTH(' SQL Has   htag   ') AS 'DataLength' -- Considera todos os espaços antes e depois das palavras
 /* -------------------------------------------------------------------------------------------------*/
 
 /* -------------------------------------------------------------------------------------------------*/
